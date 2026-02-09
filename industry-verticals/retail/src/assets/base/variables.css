@@ -4,13 +4,13 @@
   --color-foreground-muted: #9f9f9f;
 
   --color-background: #fff;
-  --color-background-accent: #faf3ea;
-  --color-background-muted: #f7f7f7;
-  --color-background-muted-light: #7a7a7a;
-  --color-background-muted-dark: #666;
+  --color-background-accent: #395575;
+  --color-background-muted: #d7dde3;
+  --color-background-muted-light: #e0ebe6;
+  --color-background-muted-dark: #d7dde3;
   --color-background-surface: #fafafa;
 
-  --color-accent: #c1a25f;
+  --color-accent: #395575;
 
   --color-success: #2ec1ac;
   --color-danger: #e97171;
@@ -35,3 +35,4 @@
   --radius-3xl: calc(var(--radius-base) * 4);
   --radius-4xl: calc(var(--radius-base) * 5);
 }
+

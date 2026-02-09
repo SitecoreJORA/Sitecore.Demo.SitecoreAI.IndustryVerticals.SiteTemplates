@@ -85,43 +85,44 @@ const HeroBannerCommon = ({
 
 export const Default = ({ params, fields, rendering }: HeroBannerProps) => {
   const styles = params.styles || '';
-  const hideAccentLine = styles.includes(CommonStyles.HideAccentLine);
-  const withPlaceholder = styles.includes(HeroBannerStyles.WithPlaceholder);
-  const reverseLayout = styles.includes(LayoutStyles.Reversed);
   const screenLayer = styles.includes(HeroBannerStyles.ScreenLayer);
-  const searchBarPlaceholderKey = `hero-banner-search-bar-${params.DynamicPlaceholderId}`;
 
   return (
     <HeroBannerCommon params={params} fields={fields} rendering={rendering}>
       {/* Content Container */}
       <div className="relative w-full">
-        <div className="container mx-auto px-4">
-          <div
-            className={`flex min-h-238 w-full py-10 lg:w-1/2 lg:items-center ${reverseLayout ? 'lg:mr-auto' : 'lg:ml-auto'}`}
-          >
-            <div className="max-w-182">
+        <div className="">
+          <div className="flex min-h-238 w-full items-center py-10">
+            <div className="">
               <div className={clsx({ shim: screenLayer })}>
                 {/* Title */}
-                <h1 className="text-center text-5xl leading-[110%] font-bold capitalize md:text-7xl md:leading-[130%] lg:text-left xl:text-[80px]">
+                <h1
+                  className="text-center text-2xl leading-[110%] font-bold text-white lowercase md:text-6xl md:leading-[130%] xl:text-7xl"
+                  style={{
+                    background: 'rgba(57,85,117,.75)',
+                    padding: '1.5rem 2rem',
+                    width: '70%',
+                    alignSelf: 'flex-start',
+                  }}
+                >
                   <ContentSdkText field={fields.Title} />
-                  {!hideAccentLine && <AccentLine className="mx-auto !h-5 w-[9ch] lg:mx-0" />}
                 </h1>
 
                 {/* Description */}
-                <div className="mt-7 text-xl md:text-2xl">
+                <div
+                  className="mt-4 w-full justify-end text-center text-xl !text-white md:text-2xl"
+                  style={{
+                    background: 'rgba(153,190,173,.85)',
+                    padding: '1rem 2rem',
+                    width: '70%',
+                    float: 'right',
+                    alignSelf: 'flex-end',
+                  }}
+                >
                   <ContentSdkRichText
                     field={fields.Description}
-                    className="text-center lg:text-left"
+                    className="text-center !text-white [&_p]:!text-white"
                   />
-                </div>
-
-                {/* CTA Link or Placeholder */}
-                <div className="mt-6 flex w-full justify-center lg:justify-start">
-                  {withPlaceholder ? (
-                    <Placeholder name={searchBarPlaceholderKey} rendering={rendering} />
-                  ) : (
-                    <Link field={fields.CtaLink} className="arrow-btn" />
-                  )}
                 </div>
               </div>
             </div>
@@ -167,6 +168,55 @@ export const TopContent = ({ params, fields, rendering }: HeroBannerProps) => {
                 ) : (
                   <Link field={fields.CtaLink} className="arrow-btn" />
                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </HeroBannerCommon>
+  );
+};
+
+export const FormaLux = ({ params, fields, rendering }: HeroBannerProps) => {
+  const styles = params.styles || '';
+  const hideAccentLine = styles.includes(CommonStyles.HideAccentLine);
+  const withPlaceholder = styles.includes(HeroBannerStyles.WithPlaceholder);
+  const reverseLayout = styles.includes(LayoutStyles.Reversed);
+  const screenLayer = styles.includes(HeroBannerStyles.ScreenLayer);
+  const searchBarPlaceholderKey = `hero-banner-search-bar-${params.DynamicPlaceholderId}`;
+
+  return (
+    <HeroBannerCommon params={params} fields={fields} rendering={rendering}>
+      {/* Content Container */}
+      <div className="relative w-full">
+        <div className="container mx-auto px-4">
+          <div
+            className={`flex min-h-238 w-full py-10 lg:w-1/2 lg:items-center ${reverseLayout ? 'lg:mr-auto' : 'lg:ml-auto'}`}
+          >
+            <div className="max-w-182">
+              <div className={clsx({ shim: screenLayer })}>
+                {/* Title */}
+                <h1 className="text-center text-5xl leading-[110%] font-bold capitalize md:text-7xl md:leading-[130%] lg:text-left xl:text-[80px]">
+                  <ContentSdkText field={fields.Title} />
+                  {!hideAccentLine && <AccentLine className="mx-auto !h-5 w-[9ch] lg:mx-0" />}
+                </h1>
+
+                {/* Description */}
+                <div className="mt-7 text-xl md:text-2xl">
+                  <ContentSdkRichText
+                    field={fields.Description}
+                    className="text-center lg:text-left"
+                  />
+                </div>
+
+                {/* CTA Link or Placeholder */}
+                <div className="mt-6 flex w-full justify-center lg:justify-start">
+                  {withPlaceholder ? (
+                    <Placeholder name={searchBarPlaceholderKey} rendering={rendering} />
+                  ) : (
+                    <Link field={fields.CtaLink} className="arrow-btn" />
+                  )}
+                </div>
               </div>
             </div>
           </div>
