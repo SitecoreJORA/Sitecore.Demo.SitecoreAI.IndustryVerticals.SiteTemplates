@@ -50,7 +50,6 @@ export const PromoContent = ({ ...props }) => {
 
       <h2 className="inline-block max-w-md">
         <Text field={props.fields.PromoTitle} />
-        {isAccentLineVisible && <AccentLine className="w-full max-w-xs" />}
       </h2>
 
       <div className="max-w-lg text-lg">
@@ -71,16 +70,24 @@ export const SingleImageContainer = ({
   return (
     <>
       {withShapes && (
-        <div className="bg-background-muted absolute top-0 left-0 z-0 aspect-6/5 w-2/3 rounded-2xl"></div>
+        <div
+          className="shape1 absolute top-0 left-0 z-0 aspect-3/3 w-2/4"
+          style={{
+            background: '#395575',
+          }}
+        ></div>
       )}
       <div>
         <div className={clsx({ 'm-4 md:m-9 md:mb-6 xl:m-15 xl:mb-8': withShapes })}>
           {withShapes && (
-            <div className="bg-background-muted absolute top-1/2 right-0 z-0 aspect-5/3 w-3/4 -translate-y-1/2 transform rounded-2xl"></div>
+            <div
+              className="shape2 absolute top-1/2 right-0 z-0 aspect-5/5 w-2/4 -translate-y-1/80 transform"
+              style={{
+                background: '#fff',
+              }}
+            ></div>
           )}
-          <div
-            className={`relative z-10 aspect-4/3 w-full max-w-4xl overflow-hidden rounded-2xl ${shadowClass}`}
-          >
+          <div className={`relative z-10 w-full`}>
             <ContentSdkImage field={PromoImageOne} className="h-full w-full object-cover" />
           </div>
         </div>
@@ -264,6 +271,55 @@ export const WithQuote = (props: PromoProps): JSX.Element => {
               />
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const Kalaidos = (props: PromoProps): JSX.Element => {
+  const id = props.params.RenderingIdentifier;
+  const isPromoReversed = !props?.params?.styles?.includes(LayoutStyles.Reversed)
+    ? ''
+    : 'order-last';
+  const showSingleImage = !props?.params?.styles?.includes(PromoFlags.ShowMultipleImages);
+  const withShapes = !props?.params?.styles?.includes(PromoFlags.HidePromoShapes);
+  const withShadows = !props?.params?.styles?.includes(PromoFlags.HidePromoShadows);
+
+  const justifyContentClass = !showSingleImage ? 'justify-self-start' : '';
+  const firstColumnSize = showSingleImage ? 'lg:col-span-12' : 'lg:col-span-12';
+  const secondColumnSize = showSingleImage ? 'lg:col-span-12' : 'lg:col-span-12';
+
+  return (
+    <section
+      className={`${props.params.styles} Kalaidos-promo py-20`}
+      style={{
+        background: '#d7dde3',
+      }}
+      id={id ? id : undefined}
+    >
+      <div className="container grid grid-cols-1 place-items-center gap-10 lg:grid-cols-12">
+        <div className={`col-span-full ${secondColumnSize} ${justifyContentClass}`}>
+          <PromoContent {...props} />
+        </div>
+        <div
+          className={`${isPromoReversed} col-span-full max-w-100 ${firstColumnSize} relative w-full`}
+        >
+          {showSingleImage ? (
+            <SingleImageContainer
+              PromoImageOne={props.fields.PromoImageOne}
+              withShapes={withShapes}
+              withShadows={withShadows}
+            />
+          ) : (
+            <MultipleImageContainer
+              PromoImageOne={props.fields.PromoImageOne}
+              PromoImageTwo={props.fields.PromoImageTwo}
+              PromoImageThree={props.fields.PromoImageThree}
+              withShapes={withShapes}
+              withShadows={withShadows}
+            />
+          )}
         </div>
       </div>
     </section>

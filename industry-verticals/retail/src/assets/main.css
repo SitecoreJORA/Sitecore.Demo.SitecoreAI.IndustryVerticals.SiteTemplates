@@ -29,3 +29,11 @@
     color: white;
   }
 }
+
+.kalaidos-green {
+  background-color: #e0ebe6 !important;
+  .shape1 {
+    background-color: #9abead !important;
+  }
+}
+
