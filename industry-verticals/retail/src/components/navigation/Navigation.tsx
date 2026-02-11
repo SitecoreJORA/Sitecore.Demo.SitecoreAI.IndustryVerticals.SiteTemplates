@@ -34,6 +34,7 @@ interface NavigationListItemProps {
   handleClick: (event?: React.MouseEvent<HTMLElement>) => void;
   logoSrc?: string;
   isSimpleLayout?: boolean;
+  isInSubmenu?: boolean;
 }
 
 export interface NavigationProps extends ComponentProps {
@@ -45,6 +46,7 @@ const NavigationListItem: React.FC<NavigationListItemProps> = ({
   handleClick,
   logoSrc,
   isSimpleLayout,
+  isInSubmenu = false,
 }) => {
   const { page } = useSitecore();
   const [isActive, setIsActive] = useState(false);
@@ -72,6 +74,7 @@ const NavigationListItem: React.FC<NavigationListItemProps> = ({
           handleClick={clickHandler}
           isSimpleLayout={isSimpleLayout}
           logoSrc={logoSrc}
+          isInSubmenu={hasDropdownMenu || isInSubmenu}
         />
       ))
     : null;
@@ -94,7 +97,14 @@ const NavigationListItem: React.FC<NavigationListItemProps> = ({
           field={getLinkField(fields)}
           editable={page.mode.isEditing}
           onClick={clickHandler}
-          className="hover:text-foreground-light whitespace-nowrap transition-colors"
+          className={clsx(
+            'whitespace-nowrap transition-colors',
+            isInSubmenu
+              ? 'text-blue-900 hover:text-blue-900'
+              : hasDropdownMenu && isActive && page.mode.isEditing
+                ? 'rounded bg-white px-3 py-1 text-blue-900 hover:text-blue-900'
+                : 'text-white hover:text-white'
+          )}
         >
           {getLinkContent(fields, logoSrc)}
         </Link>
@@ -115,7 +125,7 @@ const NavigationListItem: React.FC<NavigationListItemProps> = ({
           >
             <ChevronDown
               className={clsx(
-                'size-4 transition-transform duration-300',
+                'size-4 text-white transition-transform duration-300',
                 isActive && 'rotate-180',
                 'navigation-dropdown-trigger'
               )}
@@ -127,7 +137,7 @@ const NavigationListItem: React.FC<NavigationListItemProps> = ({
         <ul
           role="menu"
           className={clsx(
-            'flex flex-col items-center gap-x-8 gap-y-4 xl:gap-x-14',
+            'flex flex-col gap-x-8 gap-y-4 xl:gap-x-14',
             isRootItem && 'lg:flex-row',
             hasDropdownMenu &&
               clsx(
@@ -188,7 +198,7 @@ export const Default = ({ params, fields }: NavigationProps) => {
     ));
 
   return (
-    <div className={`component navigation bg-background ${styles}`} id={id}>
+    <div className={`component navigation ${styles}`} id={id}>
       <div
         className={clsx(
           'relative z-150 container flex items-center py-4 lg:hidden',
@@ -228,7 +238,7 @@ export const Default = ({ params, fields }: NavigationProps) => {
 
       <nav
         className={clsx(
-          'bg-background z-100 flex duration-300',
+          'z-100 flex duration-300',
           'max-lg:fixed max-lg:inset-0',
           !isMenuOpen && 'max-lg:-translate-y-full max-lg:opacity-0'
         )}
@@ -236,7 +246,7 @@ export const Default = ({ params, fields }: NavigationProps) => {
         <ul
           role="menubar"
           className={clsx(
-            'container flex flex-col items-center justify-center gap-x-8 gap-y-4 py-6 text-lg lg:flex-row xl:gap-x-16',
+            'container flex flex-col gap-x-8 gap-y-4 py-6 text-lg lg:flex-row xl:gap-x-16',
             isSimpleLayout && !hasLogoRootItem && 'lg:justify-end'
           )}
         >

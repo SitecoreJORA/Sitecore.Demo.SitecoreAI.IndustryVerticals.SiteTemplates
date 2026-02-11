@@ -43,9 +43,9 @@ const LinkListItem = ({
     .join(' ');
 
   return (
-    <li className={classNames}>
-      <div className="field-link">
-        <ContentSdkLink field={field} />
+    <li className={`${classNames} block w-full`}>
+      <div className="field-link block">
+        <ContentSdkLink field={field} className="arrow-btn" />
       </div>
     </li>
   );
@@ -74,8 +74,7 @@ export const Default = ({ params, fields }: LinkListProps) => {
 
     return (
       <>
-        <Text tag="h3" field={datasource.field?.title} />
-        <ul>{links}</ul>
+        <ul className="flex flex-col gap-2 rounded-xl border p-4">{links}</ul>
       </>
     );
   };

@@ -43,21 +43,20 @@ export const PromoContent = ({ ...props }) => {
   const isAccentLineVisible = !props?.params?.styles?.includes(CommonStyles.HideAccentLine);
 
   return (
-    <div className="space-y-5">
-      <div className="eyebrow">
-        <Text field={props.fields.PromoSubTitle} />
-      </div>
-
+    <div className="space-y-5 rounded-2xl border p-10">
       <h2 className="inline-block max-w-md">
         <Text field={props.fields.PromoTitle} />
-        {isAccentLineVisible && <AccentLine className="w-full max-w-xs" />}
       </h2>
 
       <div className="max-w-lg text-lg">
         <ContentSdkRichText field={props.fields.PromoDescription} />
       </div>
 
-      <Link field={props.fields.PromoMoreInfo} className="arrow-btn" />
+      <Link
+        field={props.fields.PromoMoreInfo}
+        className="arrow-btn"
+        style={{ borderBottomWidth: 0, color: 'black' }}
+      />
     </div>
   );
 };

@@ -97,18 +97,17 @@ export const Default = ({ params, fields, rendering }: HeroBannerProps) => {
       <div className="relative w-full">
         <div className="container mx-auto px-4">
           <div
-            className={`flex min-h-238 w-full py-10 lg:w-1/2 lg:items-center ${reverseLayout ? 'lg:mr-auto' : 'lg:ml-auto'}`}
+            className={`flex min-h-138 w-full py-10 lg:w-1/2 lg:items-center ${reverseLayout ? 'lg:mr-auto' : 'lg:ml-auto'}`}
           >
-            <div className="max-w-182">
+            <div className="bg-background max-w-182 rounded-lg p-10">
               <div className={clsx({ shim: screenLayer })}>
                 {/* Title */}
-                <h1 className="text-center text-5xl leading-[110%] font-bold capitalize md:text-7xl md:leading-[130%] lg:text-left xl:text-[80px]">
+                <h1 className="text-center text-xl leading-[110%] font-bold capitalize md:text-xl md:leading-[130%] lg:text-left xl:text-[30px]">
                   <ContentSdkText field={fields.Title} />
-                  {!hideAccentLine && <AccentLine className="mx-auto !h-5 w-[9ch] lg:mx-0" />}
                 </h1>
 
                 {/* Description */}
-                <div className="mt-7 text-xl md:text-2xl">
+                <div className="text-l md:text-l mt-7">
                   <ContentSdkRichText
                     field={fields.Description}
                     className="text-center lg:text-left"
@@ -120,7 +119,11 @@ export const Default = ({ params, fields, rendering }: HeroBannerProps) => {
                   {withPlaceholder ? (
                     <Placeholder name={searchBarPlaceholderKey} rendering={rendering} />
                   ) : (
-                    <Link field={fields.CtaLink} className="arrow-btn" />
+                    <Link
+                      field={fields.CtaLink}
+                      className="btn rounded-lg"
+                      style={{ background: '#e97220', color: '#fff', padding: '15px' }}
+                    />
                   )}
                 </div>
               </div>
