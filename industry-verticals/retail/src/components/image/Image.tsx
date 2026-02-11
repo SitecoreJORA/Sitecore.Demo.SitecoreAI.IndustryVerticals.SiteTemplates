@@ -4,7 +4,6 @@ import {
   NextImage as ContentSdkImage,
   Link as ContentSdkLink,
   LinkField,
-  Text,
   useSitecore,
 } from '@sitecore-content-sdk/nextjs';
 import React from 'react';
