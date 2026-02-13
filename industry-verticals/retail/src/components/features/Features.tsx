@@ -221,24 +221,26 @@ export const ImageCardGrid = (props: FeaturesProps) => {
 
   return (
     <FeatureWrapper props={props}>
-      <div className="outline-non container grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
+      <div className="outline-non container grid grid-cols-2 gap-12 md:grid-cols-3 lg:grid-cols-5">
         {results.map((item, index) => {
           const title = item.featureTitle.jsonValue;
-          const description = item.featureDescription.jsonValue;
           const image = item.featureImage.jsonValue;
           return (
             <div key={index}>
-              <div className="mb-7 aspect-4/3 w-full overflow-hidden rounded-lg bg-white">
-                <Image field={image} className="h-full w-full object-cover" />
+              <div className="m-auto mb-7 h-[125px] w-[125px] overflow-hidden bg-white">
+                <Image field={image} className="m-auto mt-4 mb-2 w-full max-w-[48px]" />
+                <h6
+                  style={{
+                    width: '100%',
+                    fontSize: '16px',
+                    margin: 'auto',
+                    textAlign: 'center',
+                    padding: '0 10px',
+                  }}
+                >
+                  <Text field={title} />
+                </h6>
               </div>
-
-              <h6>
-                <Text field={title} />
-              </h6>
-
-              <p className="text-foreground-muted mt-1 text-lg">
-                <Text field={description} />
-              </p>
             </div>
           );
         })}

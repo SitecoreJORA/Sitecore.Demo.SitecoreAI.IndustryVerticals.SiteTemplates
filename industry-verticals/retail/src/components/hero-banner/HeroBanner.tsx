@@ -40,7 +40,7 @@ const HeroBannerCommon = ({
 
   if (!fields) {
     return isPageEditing ? (
-      <div className={`component hero-banner ${styles}`} id={id}>
+      <div className={`component hero-banner bg-background-muted${styles}`} id={id}>
         [HERO BANNER]
       </div>
     ) : (
@@ -49,9 +49,12 @@ const HeroBannerCommon = ({
   }
 
   return (
-    <div className={`component hero-banner ${styles} relative flex items-center`} id={id}>
+    <div
+      className={`component hero-banner bg-background-muted pb-100 ${styles} relative flex items-center`}
+      id={id}
+    >
       {/* Background Media */}
-      <div className="absolute inset-0 z-0">
+      <div className="bg-background-muted absolute inset-0 z-0">
         {!isPageEditing && fields?.Video?.value?.src ? (
           <video
             className="h-full w-full object-cover"
@@ -68,6 +71,7 @@ const HeroBannerCommon = ({
             <ContentSdkImage
               field={fields.Image}
               className="h-full w-full object-cover md:object-bottom"
+              style={{ maxHeight: '654px' }}
               priority
             />
           </>
@@ -87,7 +91,6 @@ export const Default = ({ params, fields, rendering }: HeroBannerProps) => {
   const styles = params.styles || '';
   const hideAccentLine = styles.includes(CommonStyles.HideAccentLine);
   const withPlaceholder = styles.includes(HeroBannerStyles.WithPlaceholder);
-  const reverseLayout = styles.includes(LayoutStyles.Reversed);
   const screenLayer = styles.includes(HeroBannerStyles.ScreenLayer);
   const searchBarPlaceholderKey = `hero-banner-search-bar-${params.DynamicPlaceholderId}`;
 
@@ -96,13 +99,14 @@ export const Default = ({ params, fields, rendering }: HeroBannerProps) => {
       {/* Content Container */}
       <div className="relative w-full">
         <div className="container mx-auto px-4">
-          <div
-            className={`flex min-h-238 w-full py-10 lg:w-1/2 lg:items-center ${reverseLayout ? 'lg:mr-auto' : 'lg:ml-auto'}`}
-          >
-            <div className="max-w-182">
+          <div className={`flex w-full`}>
+            <div
+              className="top-90 m-auto max-w-1000 items-center bg-white"
+              style={{ position: 'relative' }}
+            >
               <div className={clsx({ shim: screenLayer })}>
                 {/* Title */}
-                <h1 className="text-center text-5xl leading-[110%] font-bold capitalize md:text-7xl md:leading-[130%] lg:text-left xl:text-[80px]">
+                <h1 className="text-accent text-center text-5xl leading-[110%] font-bold md:text-7xl md:leading-[130%] lg:text-left xl:text-[60px]">
                   <ContentSdkText field={fields.Title} />
                   {!hideAccentLine && <AccentLine className="mx-auto !h-5 w-[9ch] lg:mx-0" />}
                 </h1>
@@ -120,7 +124,10 @@ export const Default = ({ params, fields, rendering }: HeroBannerProps) => {
                   {withPlaceholder ? (
                     <Placeholder name={searchBarPlaceholderKey} rendering={rendering} />
                   ) : (
-                    <Link field={fields.CtaLink} className="arrow-btn" />
+                    <Link
+                      field={fields.CtaLink}
+                      className="bg-success hover:bg-success rounded-full px-4 py-2 font-bold text-white"
+                    />
                   )}
                 </div>
               </div>

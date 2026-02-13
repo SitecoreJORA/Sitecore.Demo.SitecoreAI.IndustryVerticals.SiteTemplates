@@ -4,7 +4,6 @@ import {
   NextImage as ContentSdkImage,
   Link as ContentSdkLink,
   LinkField,
-  Text,
   useSitecore,
 } from '@sitecore-content-sdk/nextjs';
 import React from 'react';
@@ -57,7 +56,6 @@ export const Default: React.FC<ImageProps> = (props) => {
       ) : (
         <Image />
       )}
-      <Text tag="span" className="image-caption" field={fields.ImageCaption} />
     </ImageWrapper>
   );
 };
