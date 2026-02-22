@@ -28,3 +28,21 @@
   background-color: #666 !important;
 }
 
+#header {
+  img {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    max-width: 89px;
+  }
+}
+
+.d-none {
+  display: none;
+}
+
+.d-lg-inline {
+  @media (min-width: 992px) {
+    display: inline !important;
+  }
+}
+

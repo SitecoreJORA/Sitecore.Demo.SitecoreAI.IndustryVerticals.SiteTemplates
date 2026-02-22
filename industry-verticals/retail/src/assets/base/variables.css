@@ -10,9 +10,9 @@
   --color-background-muted-dark: #666;
   --color-background-surface: #fafafa;
 
-  --color-accent: #c1a25f;
+  --color-accent: #ff8200;
 
-  --color-success: #2ec1ac;
+  --color-success: #00b8cf;
   --color-danger: #e97171;
 
   --color-border: #e8e8e8;
@@ -35,3 +35,4 @@
   --radius-3xl: calc(var(--radius-base) * 4);
   --radius-4xl: calc(var(--radius-base) * 5);
 }
+
