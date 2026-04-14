@@ -75,7 +75,7 @@ export const Default = ({ params, fields, rendering }: ArticleDetailsProps) => {
               />
             )}
 
-            <div className="col-span-12 aspect-video w-full overflow-hidden rounded-lg lg:col-span-10 lg:col-start-2">
+            <div className="col-span-12 aspect-video w-full overflow-hidden lg:col-span-10 lg:col-start-2">
               <ContentSdkImage field={fields.Image} className="h-full w-full object-cover" />
             </div>
 

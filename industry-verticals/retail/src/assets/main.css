@@ -36,4 +36,21 @@
     background-color: #9abead !important;
   }
 }
+.indent {
+  margin-right: 10px;
+}
+
+#header {
+  .image {
+    max-width: 160px;
+    padding: 30px 10px;
+  }
+}
+
+.language-switcher {
+  button {
+    float: right;
+    padding: 34px 10px;
+  }
+}
 

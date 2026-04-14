@@ -5,3 +5,12 @@
 .component.container .column-splitter.row {
   @apply px-0;
 }
+
+/*
+ * Each column wraps its placeholder in a nested `.row`. Bootstrap-style rows use
+ * negative horizontal margins that cancel the parent column gutters, so columns
+ * look flush. Keep the outer gutters by not pulling the inner row into them.
+ */
+.column-splitter.row > * > .row {
+  @apply mx-0;
+}

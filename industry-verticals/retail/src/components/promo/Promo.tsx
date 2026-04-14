@@ -84,7 +84,7 @@ export const SingleImageContainer = ({
               }}
             ></div>
           )}
-          <div className={`relative z-10 h-full w-full overflow-hidden rounded-2xl ${shadowClass}`}>
+          <div className={`relative z-10 h-full w-full overflow-hidden ${shadowClass}`}>
             <ContentSdkImage field={PromoImageOne} className="h-full w-full object-cover" />
           </div>
         </div>

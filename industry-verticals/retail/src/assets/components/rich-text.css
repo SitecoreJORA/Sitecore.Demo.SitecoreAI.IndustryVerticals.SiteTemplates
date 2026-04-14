@@ -46,6 +46,12 @@
       @apply my-2;
     }
   }
+
+  a {
+    background-color: #395575;
+    padding: 10px 10px;
+    color: #fff;
+  }
 }
 
 /* custom bullet points */
@@ -60,3 +66,4 @@
     }
   }
 }
+
