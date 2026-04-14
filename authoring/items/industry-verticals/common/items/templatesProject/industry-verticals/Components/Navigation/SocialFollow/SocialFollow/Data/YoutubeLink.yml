@@ -1,8 +1,8 @@
 ﻿---
-ID: "8eb52c3f-0da7-4370-97b4-6660650496c5"
+ID: "82a5236e-7ffe-45e4-a987-437a3e9ed5fe"
 Parent: "512ce8b8-dd53-49fd-bf64-c489b7191331"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
-Path: "/sitecore/templates/Project/industry-verticals/Components/Navigation/SocialFollow/SocialFollow/Promo/LinkedinLink"
+Path: "/sitecore/templates/Project/industry-verticals/Components/Navigation/SocialFollow/SocialFollow/Data/YoutubeLink"
 SharedFields:
 - ID: "1eb8ae32-e190-44a6-968d-ed904c794ebf"
   Hint: Source
@@ -15,22 +15,22 @@ SharedFields:
   Value: General Link
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
-  Value: 600
+  Value: 200
 - ID: "dbbbeca1-21c7-4906-9dd2-493c1efa59a2"
   Hint: __Shared revision
-  Value: "1eb5829f-54df-4697-b39d-d6773fee8801"
+  Value: "e355d946-fcee-445e-9f51-165b41753bb9"
 Languages:
 - Language: "de-DE"
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: Bild 2
+    Value: __Standard Werte
   - ID: "30e85e5d-e00a-4864-b358-7624d511deb4"
     Hint: __Unversioned revision
     Value: "b8f06bc4-acd2-438f-9f9f-b96bdc298b75"
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
     Hint: __Display name
-    Value: PromoIcon2
+    Value: PromoIcon
   Versions:
   - Version: 1
     Fields:
@@ -59,30 +59,26 @@ Languages:
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: Linkedin
+    Value: Youtube
   - ID: "30e85e5d-e00a-4864-b358-7624d511deb4"
     Hint: __Unversioned revision
-    Value: "b3533dd4-7425-45f5-9640-7c51422135a9"
+    Value: "cccf9528-7a20-419d-a0fe-85b2c194396c"
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20141106T105010Z
-    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
-      Hint: __Created by
-      Value: |
-        sitecore\adamnaj
+      Value: 20111213T133500Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "7170c7d0-d34a-406d-8fdb-09a4412545d8"
+      Value: "82bb59b5-a737-4b9c-a638-dfc46ab4495e"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\isuru.bandara@sitecore.com
+        sitecore\neli.kostadinova@sitecore.com
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20250901T105639Z
+      Value: 20260213T063534Z
     - ID: "fa622538-0c13-4130-a001-45984241aa00"
       Hint: Enable Language Fallback
       Value: 1
@@ -90,13 +86,13 @@ Languages:
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: 画像 2
+    Value: __標準値
   - ID: "30e85e5d-e00a-4864-b358-7624d511deb4"
     Hint: __Unversioned revision
     Value: "b8f06bc4-acd2-438f-9f9f-b96bdc298b75"
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
     Hint: __Display name
-    Value: プロモ アイコン2
+    Value: プロモ アイコン
   Versions:
   - Version: 1
     Fields:
@@ -125,13 +121,13 @@ Languages:
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: 图片2
+    Value: __标准值
   - ID: "30e85e5d-e00a-4864-b358-7624d511deb4"
     Hint: __Unversioned revision
     Value: "b8f06bc4-acd2-438f-9f9f-b96bdc298b75"
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
     Hint: __Display name
-    Value: 促销图标2
+    Value: 促销图标
   Versions:
   - Version: 1
     Fields:
