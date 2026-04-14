@@ -11,9 +11,8 @@ import {
 } from '@sitecore-content-sdk/nextjs';
 import { ComponentProps } from 'lib/component-props';
 import clsx from 'clsx';
-import AccentLine from '@/assets/icons/accent-line/AccentLine';
 import { Quote } from '@/assets/icons/quote/Quote';
-import { CommonStyles, LayoutStyles, PromoFlags } from '@/types/styleFlags';
+import { LayoutStyles, PromoFlags } from '@/types/styleFlags';
 
 interface Fields {
   PromoImageOne: ImageField;
@@ -40,8 +39,6 @@ export type PromoProps = ComponentProps & {
 const isShadowClassActive = (val: boolean) => (val ? 'shadow-2xl' : '');
 
 export const PromoContent = ({ ...props }) => {
-  const isAccentLineVisible = !props?.params?.styles?.includes(CommonStyles.HideAccentLine);
-
   return (
     <div className="space-y-5">
       <div className="eyebrow">
@@ -87,7 +84,7 @@ export const SingleImageContainer = ({
               }}
             ></div>
           )}
-          <div className={`relative z-10 w-full`}>
+          <div className={`relative z-10 h-full w-full overflow-hidden rounded-2xl ${shadowClass}`}>
             <ContentSdkImage field={PromoImageOne} className="h-full w-full object-cover" />
           </div>
         </div>
