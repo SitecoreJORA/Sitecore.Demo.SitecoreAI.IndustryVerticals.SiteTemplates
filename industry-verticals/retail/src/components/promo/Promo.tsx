@@ -41,9 +41,9 @@ const isShadowClassActive = (val: boolean) => (val ? 'shadow-2xl' : '');
 export const PromoContent = ({ ...props }) => {
   return (
     <div className="space-y-5">
-      <div className="eyebrow">
+      {/* <div className="eyebrow">
         <Text field={props.fields.PromoSubTitle} />
-      </div>
+      </div> */}
 
       <h2 className="inline-block max-w-md">
         <Text field={props.fields.PromoTitle} />

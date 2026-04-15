@@ -23,7 +23,11 @@ function QuoteMarkIcon({ className }: { className?: string }) {
       style={{ color: REVIEW_ACCENT }}
       aria-hidden
     >
-      &ldquo;
+      <img
+        src="https://kalaidos.sitecoresandbox.cloud/api/public/content/d56764bfb65d4392a27f09bea31b29b1?v=3d4c5687"
+        alt="Quote Mark"
+        className="h-10 w-10"
+      />
     </span>
   );
 }
