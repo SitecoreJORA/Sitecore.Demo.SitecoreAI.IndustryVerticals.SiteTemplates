@@ -45,12 +45,33 @@
     max-width: 160px;
     padding: 30px 10px;
   }
+  .image-caption {
+    display: none;
+  }
 }
 
 .language-switcher {
   button {
     float: right;
     padding: 34px 10px;
+  }
+}
+#footer {
+  .image {
+    max-width: 207px;
+    padding: 20px 0px;
+  }
+  .image-caption {
+    display: none;
+  }
+  hr {
+    height: 1px;
+  }
+  .rich-text {
+    padding-left: 0px;
+  }
+  .col-lg-6 {
+    padding-left: 0px;
   }
 }
 
