@@ -166,10 +166,7 @@ export const Default = (props: PromoProps): JSX.Element => {
   const withShadows = !props?.params?.styles?.includes(PromoFlags.HidePromoShadows);
 
   return (
-    <section
-      className={clsx(props.params.styles, 'py-2 md:py-4 lg:py-6')}
-      id={id ? id : undefined}
-    >
+    <section className={clsx(props.params.styles, 'py-2 md:py-4 lg:py-6')} id={id ? id : undefined}>
       <div className="container">
         <div
           className={clsx(

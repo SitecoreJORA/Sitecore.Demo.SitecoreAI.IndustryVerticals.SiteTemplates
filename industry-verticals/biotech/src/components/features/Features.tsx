@@ -231,8 +231,7 @@ export const ImageCardGrid = (props: FeaturesProps) => {
           const image = item.featureImage.jsonValue;
           const imageSrc = image?.value?.src;
           const showImage = Boolean(imageSrc) || isEditing;
-          const descText =
-            typeof description?.value === 'string' ? description.value.trim() : '';
+          const descText = typeof description?.value === 'string' ? description.value.trim() : '';
           const showDescription = isEditing || descText.length > 0;
 
           return (
