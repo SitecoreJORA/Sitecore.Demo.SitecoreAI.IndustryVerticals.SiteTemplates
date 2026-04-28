@@ -23,3 +23,53 @@
 /* responsive classes are in base/tailwind-bootstrap-grid */
 @source inline("col-{1..12}");
 @source inline("offset-{1..12}");
+
+.d-md-none{
+  @media (min-width: 752px) {
+    display: none;
+  }
+}
+
+.d-none{
+  display: none;
+}
+
+.d-md-inline{
+  @media (min-width: 752px) {
+    display: inline;
+  }
+  
+}
+
+.d-lg-inline{
+  display: inline;
+}
+
+.d-xl-inline{
+  display: inline;
+}
+
+.d-xxl-inline{
+  display: inline;
+}
+
+.header{
+  .image{
+    width: 60px;
+    height: 51px;
+    .image-caption{
+      display: none;
+    }
+  }
+  .language-switcher{
+    button{float: right;}
+  }
+}
+.container-color-background{
+  .rich-text{
+    p, ul, ol{
+      color: white;
+    }
+    color: white;
+  }
+}

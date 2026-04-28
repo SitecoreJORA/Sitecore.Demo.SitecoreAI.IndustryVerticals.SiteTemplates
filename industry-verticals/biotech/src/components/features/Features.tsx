@@ -6,6 +6,7 @@ import {
   Image,
   Link,
   Text,
+  useSitecore,
 } from '@sitecore-content-sdk/nextjs';
 import React from 'react';
 import AccentLine from '@/assets/icons/accent-line/AccentLine';
@@ -218,27 +219,44 @@ export const FourColGrid = (props: FeaturesProps) => {
 
 export const ImageCardGrid = (props: FeaturesProps) => {
   const results = props.fields.data.datasource.children.results;
+  const { page } = useSitecore();
+  const isEditing = page.mode.isEditing;
 
   return (
     <FeatureWrapper props={props}>
-      <div className="outline-non container grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
+      <div className="container grid grid-cols-2 gap-4 py-12 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-5">
         {results.map((item, index) => {
           const title = item.featureTitle.jsonValue;
           const description = item.featureDescription.jsonValue;
           const image = item.featureImage.jsonValue;
+          const imageSrc = image?.value?.src;
+          const showImage = Boolean(imageSrc) || isEditing;
+          const descText =
+            typeof description?.value === 'string' ? description.value.trim() : '';
+          const showDescription = isEditing || descText.length > 0;
+
           return (
-            <div key={index}>
-              <div className="mb-7 aspect-4/3 w-full overflow-hidden rounded-lg bg-white">
-                <Image field={image} className="h-full w-full object-cover" />
-              </div>
+            <div
+              key={index}
+              className="flex min-h-[11rem] flex-col items-center justify-center gap-4 rounded-[10px] bg-[#f4f6fa] px-6 py-8 text-center"
+            >
+              {showImage && (
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center text-neutral-600 [&_img]:max-h-14 [&_img]:max-w-14 [&_img]:object-contain">
+                  <Image field={image} className="h-14 w-auto max-w-14 object-contain" />
+                </div>
+              )}
 
-              <h6>
-                <Text field={title} />
-              </h6>
+              <Text
+                tag="p"
+                className="text-foreground text-sm leading-snug font-medium sm:text-base"
+                field={title}
+              />
 
-              <p className="text-foreground-muted mt-1 text-lg">
-                <Text field={description} />
-              </p>
+              {showDescription && (
+                <p className="text-foreground-muted -mt-1 text-xs leading-relaxed sm:text-sm">
+                  <Text field={description} />
+                </p>
+              )}
             </div>
           );
         })}

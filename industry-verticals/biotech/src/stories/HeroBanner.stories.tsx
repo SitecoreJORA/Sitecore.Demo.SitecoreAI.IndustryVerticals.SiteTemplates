@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Default as HeroBanner, TopContent } from '../components/hero-banner/HeroBanner';
 import { CommonParams, CommonRendering } from './common/commonData';
 import { renderStorybookPlaceholder } from './helpers/renderStorybookPlaceholder';
-import { createLinkField, createRichTextField, createTextField } from './helpers/createFields';
+import { createLinkField, createTextField } from './helpers/createFields';
 import clsx from 'clsx';
 import { CommonStyles, HeroBannerStyles, LayoutStyles } from '@/types/styleFlags';
 
@@ -97,9 +97,9 @@ const createHeroBannerFields = () => ({
   Video: {
     value: {},
   },
-  Title: createTextField('Discover Design That Speaks to You'),
-  Description: createRichTextField(1),
-  CtaLink: createLinkField("See what's new"),
+  Title: createTextField('A bid to catch pancreatic cancer early'),
+  Description: { value: '<p>Cancer Research</p>' },
+  CtaLink: createLinkField('Read the story'),
 });
 
 export const Default: Story = {
