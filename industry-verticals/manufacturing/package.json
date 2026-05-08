@@ -38,6 +38,7 @@
     "@sitecore-search/ui": "^3.0.0",
     "@sitecore/components": "~2.1.0",
     "@tailwindcss/postcss": "^4.1.11",
+    "chart.js": "^4.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "font-awesome": "^4.7.0",

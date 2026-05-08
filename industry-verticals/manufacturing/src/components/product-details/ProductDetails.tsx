@@ -1,5 +1,5 @@
 import { Placeholder, useSitecore } from '@sitecore-content-sdk/nextjs';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ComponentProps } from '@/lib/component-props';
 import { Heart, Plus } from 'lucide-react';
 import { isParamEnabled } from '@/helpers/isParamEnabled';
@@ -14,6 +14,8 @@ import { ProductDescription } from '../non-sitecore/ProductDescription';
 import { ProductSizeControl } from '../non-sitecore/ProductSizeControl';
 import { ProductColorControl } from '../non-sitecore/ProductColorControl';
 import { CONTENT_HUB_CONFIG } from '@/constants/content-hub';
+import { ProductDataSheetView } from './product-data-sheet/ProductDataSheetView';
+import { parseDataSheetJson, parseDiagramDataJson } from './product-data-sheet/parsers';
 
 interface ProductDetailsProps extends ComponentProps {
   params: { [key: string]: string };
@@ -42,8 +44,15 @@ export const Default = (props: ProductDetailsProps) => {
   const [selectedSize, setSelectedSize] = useState(product?.Size?.[0]);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [productDataSheet, setProductDataSheet] = useState<string | null>(null);
+  const [productDiagramData, setProductDiagramData] = useState<string | null>(null);
   const [productDataSheetError, setProductDataSheetError] = useState<string | null>(null);
   const [isLoadingProductDataSheet, setIsLoadingProductDataSheet] = useState(false);
+
+  const parsedDataSheet = useMemo(() => parseDataSheetJson(productDataSheet), [productDataSheet]);
+  const parsedDiagramData = useMemo(
+    () => parseDiagramDataJson(productDiagramData),
+    [productDiagramData]
+  );
 
   useEffect(() => {
     setSelectedColor(product?.Color?.[0]);
@@ -54,6 +63,7 @@ export const Default = (props: ProductDetailsProps) => {
   useEffect(() => {
     if (!sku) {
       setProductDataSheet(null);
+      setProductDiagramData(null);
       setProductDataSheetError(null);
       setIsLoadingProductDataSheet(false);
       return;
@@ -71,27 +81,35 @@ export const Default = (props: ProductDetailsProps) => {
           { signal: controller.signal }
         );
         const json = (await res.json()) as
-          | { id: string; sCHOTT_ProductDataSheet: string | null }
+          | {
+              id: string;
+              sCHOTT_ProductDataSheet: string | null;
+              sCHOTT_DiagramData?: string | null;
+            }
           | { error: string };
 
         if (!res.ok) {
           const message = 'error' in json ? json.error : `Request failed (${res.status})`;
           setProductDataSheet(null);
+          setProductDiagramData(null);
           setProductDataSheetError(message);
           return;
         }
 
         if (!('sCHOTT_ProductDataSheet' in json)) {
           setProductDataSheet(null);
+          setProductDiagramData(null);
           setProductDataSheetError('Unexpected response from server.');
           return;
         }
 
         setProductDataSheet(json.sCHOTT_ProductDataSheet ?? null);
+        setProductDiagramData(json.sCHOTT_DiagramData ?? null);
       } catch (e) {
         if (e instanceof DOMException && e.name === 'AbortError') return;
         const message = e instanceof Error ? e.message : 'Unknown error';
         setProductDataSheet(null);
+        setProductDiagramData(null);
         setProductDataSheetError(message);
       } finally {
         setIsLoadingProductDataSheet(false);
@@ -201,7 +219,9 @@ export const Default = (props: ProductDetailsProps) => {
       />
 
       <div className="container mt-8">
-        <h3 className="text-xl font-bold">sCHOTT_ProductDataSheet</h3>
+        <h3 className="text-xl font-bold">
+          {t('product_datasheet_heading') || 'Technical datasheet'}
+        </h3>
         {!sku && (
           <p className="text-foreground-muted mt-2 text-sm">No SKU found on this product.</p>
         )}
@@ -213,17 +233,21 @@ export const Default = (props: ProductDetailsProps) => {
         )}
 
         {!isLoadingProductDataSheet && !productDataSheetError && sku && (
-          <pre className="bg-muted mt-4 max-h-[520px] overflow-auto rounded-lg p-4 text-xs leading-5 break-words whitespace-pre-wrap">
-            {(() => {
-              if (!productDataSheet) return 'No data returned.';
-              try {
-                const parsed = JSON.parse(productDataSheet) as unknown;
-                return JSON.stringify(parsed, null, 2);
-              } catch {
-                return productDataSheet;
-              }
-            })()}
-          </pre>
+          <div className="mt-6">
+            {!productDataSheet && (
+              <p className="text-foreground-muted text-sm">No datasheet returned for this SKU.</p>
+            )}
+            {productDataSheet && !parsedDataSheet && (
+              <p className="text-sm text-amber-700">
+                The datasheet payload could not be parsed as valid JSON.
+              </p>
+            )}
+            {parsedDataSheet && (
+              <div className="border-border bg-background-muted/40 rounded-xl border p-6 sm:p-8">
+                <ProductDataSheetView document={parsedDataSheet} diagramData={parsedDiagramData} />
+              </div>
+            )}
+          </div>
         )}
       </div>
 

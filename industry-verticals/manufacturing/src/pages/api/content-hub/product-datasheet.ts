@@ -4,6 +4,8 @@ import { CONTENT_HUB_CONFIG } from '@/constants/content-hub';
 type SuccessResponse = {
   id: string;
   sCHOTT_ProductDataSheet: string | null;
+  /** SCHOTT.DiagramData JSON when exposed on the PCM Product entity in Content Hub GraphQL. */
+  sCHOTT_DiagramData: string | null;
 };
 
 type ErrorResponse = {
@@ -33,6 +35,61 @@ function getAuthHeaders(): Record<string, string> {
   return headers;
 }
 
+type GraphQlPayload = {
+  data?: {
+    m_PCM_Product?: {
+      sCHOTT_ProductDataSheet?: string | null;
+      sCHOTT_DiagramData?: string | null;
+    } | null;
+  } | null;
+  errors?: Array<{ message?: string }>;
+};
+
+async function postContentHubGraphql(
+  query: string,
+  id: string
+): Promise<{ response: Response; raw: string; json: GraphQlPayload | null }> {
+  const response = await fetch(CONTENT_HUB_CONFIG.graphqlPreviewUrl, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ query, variables: { id } }),
+  });
+  const raw = await response.text();
+  let json: GraphQlPayload | null = null;
+  try {
+    json = JSON.parse(raw) as GraphQlPayload;
+  } catch {
+    json = null;
+  }
+  return { response, raw, json };
+}
+
+/** When the preview schema has no `sCHOTT_DiagramData` field, retry without it so the datasheet still loads. */
+function shouldRetryDatasheetOnly(errors: Array<{ message?: string }>): boolean {
+  const msg = errors.map((e) => e?.message ?? '').join('; ');
+  return (
+    /sCHOTT_DiagramData/i.test(msg) &&
+    /cannot query field|unknown field|undefinedfield|undefined field/i.test(msg)
+  );
+}
+
+const QUERY_PRODUCT_DATASHEET_AND_DIAGRAM = /* GraphQL */ `
+  query ProductDataSheet($id: String!) {
+    m_PCM_Product(id: $id) {
+      sCHOTT_ProductDataSheet
+      sCHOTT_DiagramData
+    }
+  }
+`;
+
+const QUERY_PRODUCT_DATASHEET_ONLY = /* GraphQL */ `
+  query ProductDataSheet($id: String!) {
+    m_PCM_Product(id: $id) {
+      sCHOTT_ProductDataSheet
+    }
+  }
+`;
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<SuccessResponse | ErrorResponse>
@@ -49,34 +106,20 @@ export default async function handler(
     return res.status(400).json({ error: 'Missing required query parameter: id' });
   }
 
-  const query = /* GraphQL */ `
-    query ProductDataSheet($id: String!) {
-      m_PCM_Product(id: $id) {
-        sCHOTT_ProductDataSheet
-      }
-    }
-  `;
-
   try {
-    const response = await fetch(CONTENT_HUB_CONFIG.graphqlPreviewUrl, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ query, variables: { id } }),
-    });
+    let { response, raw, json } = await postContentHubGraphql(
+      QUERY_PRODUCT_DATASHEET_AND_DIAGRAM,
+      id
+    );
 
-    const raw = await response.text();
+    if (json?.errors?.length && shouldRetryDatasheetOnly(json.errors)) {
+      const second = await postContentHubGraphql(QUERY_PRODUCT_DATASHEET_ONLY, id);
+      response = second.response;
+      raw = second.raw;
+      json = second.json;
+    }
+
     const contentType = response.headers.get('content-type') || '';
-
-    const json = (() => {
-      try {
-        return JSON.parse(raw) as {
-          data?: { m_PCM_Product?: { sCHOTT_ProductDataSheet?: string | null } | null } | null;
-          errors?: Array<{ message?: string }>;
-        };
-      } catch {
-        return null;
-      }
-    })();
 
     if (!response.ok) {
       const messageFromGraphql = json?.errors
@@ -107,8 +150,14 @@ export default async function handler(
       return res.status(502).json({ error: message });
     }
 
-    const dataSheet = json?.data?.m_PCM_Product?.sCHOTT_ProductDataSheet ?? null;
-    return res.status(200).json({ id, sCHOTT_ProductDataSheet: dataSheet });
+    const product = json?.data?.m_PCM_Product;
+    const dataSheet = product?.sCHOTT_ProductDataSheet ?? null;
+    const diagramData = product?.sCHOTT_DiagramData ?? null;
+    return res.status(200).json({
+      id,
+      sCHOTT_ProductDataSheet: dataSheet,
+      sCHOTT_DiagramData: diagramData,
+    });
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Unknown error';
     return res.status(500).json({ error: message });

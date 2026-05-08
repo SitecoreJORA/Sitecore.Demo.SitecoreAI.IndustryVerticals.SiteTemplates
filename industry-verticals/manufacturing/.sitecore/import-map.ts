@@ -44,6 +44,7 @@ import { ProductMetaDetals } from 'src/components/non-sitecore/ProductMetaDetail
 import { ProductDescription } from 'src/components/non-sitecore/ProductDescription';
 import { ProductSizeControl } from 'src/components/non-sitecore/ProductSizeControl';
 import { ProductColorControl } from 'src/components/non-sitecore/ProductColorControl';
+import { CONTENT_HUB_CONFIG } from '@/constants/content-hub';
 import { EmailIcon, EmailShareButton, FacebookIcon as FacebookIcon_9cb8204ac12fcef03c9ff3e4b02fa570c6e7630c, FacebookShareButton, LinkedinIcon as LinkedinIcon_9cb8204ac12fcef03c9ff3e4b02fa570c6e7630c, LinkedinShareButton, PinterestIcon, PinterestShareButton, TwitterIcon as TwitterIcon_9cb8204ac12fcef03c9ff3e4b02fa570c6e7630c, TwitterShareButton } from 'react-share';
 import StarRating from 'src/components/non-sitecore/StarRating';
 import { ProductReviews } from 'src/components/non-sitecore/ProductReviews';
@@ -360,6 +361,12 @@ const importMap = [
     module: 'src/components/non-sitecore/ProductColorControl',
     exports: [
       { name: 'ProductColorControl', value: ProductColorControl },
+    ]
+  },
+  {
+    module: '@/constants/content-hub',
+    exports: [
+      { name: 'CONTENT_HUB_CONFIG', value: CONTENT_HUB_CONFIG },
     ]
   },
   {

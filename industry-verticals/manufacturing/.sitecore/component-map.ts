@@ -19,6 +19,10 @@ import * as Reviews from 'src/components/reviews/Reviews';
 import * as Promo from 'src/components/promo/Promo';
 import * as ProductListing from 'src/components/product-listing/ProductListing';
 import * as ProductDetails from 'src/components/product-details/ProductDetails';
+import * as parsers from 'src/components/product-details/product-data-sheet/parsers';
+import * as ProductDataSheetView from 'src/components/product-details/product-data-sheet/ProductDataSheetView';
+import * as DiagramChart from 'src/components/product-details/product-data-sheet/DiagramChart';
+import * as DataSheetBlockRenderer from 'src/components/product-details/product-data-sheet/DataSheetBlockRenderer';
 import * as PartialDesignDynamicPlaceholder from 'src/components/partial-design-dynamic-placeholder/PartialDesignDynamicPlaceholder';
 import * as PageContent from 'src/components/page-content/PageContent';
 import * as Offers from 'src/components/offers/Offers';
@@ -73,6 +77,10 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['Promo', { ...Promo }],
   ['ProductListing', { ...ProductListing }],
   ['ProductDetails', { ...ProductDetails }],
+  ['parsers', { ...parsers }],
+  ['ProductDataSheetView', { ...ProductDataSheetView }],
+  ['DiagramChart', { ...DiagramChart }],
+  ['DataSheetBlockRenderer', { ...DataSheetBlockRenderer }],
   ['PartialDesignDynamicPlaceholder', { ...PartialDesignDynamicPlaceholder }],
   ['PageContent', { ...PageContent }],
   ['Offers', { ...Offers }],
