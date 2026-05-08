@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-const CONTENT_HUB_PREVIEW_GQL_URL =
-  'https://almu-schott.sitecoresandbox.cloud/api/graphql/preview/v1';
+import { CONTENT_HUB_CONFIG } from '@/constants/content-hub';
 
 type SuccessResponse = {
   id: string;
@@ -20,7 +18,7 @@ function padBase64(value: string): string {
 }
 
 function getAuthHeaders(): Record<string, string> {
-  const previewToken = process.env.CH_PREVIEW_TOKEN?.trim();
+  const previewToken = CONTENT_HUB_CONFIG.previewToken?.trim();
 
   const headers: Record<string, string> = {
     'content-type': 'application/json',
@@ -60,7 +58,7 @@ export default async function handler(
   `;
 
   try {
-    const response = await fetch(CONTENT_HUB_PREVIEW_GQL_URL, {
+    const response = await fetch(CONTENT_HUB_CONFIG.graphqlPreviewUrl, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ query, variables: { id } }),

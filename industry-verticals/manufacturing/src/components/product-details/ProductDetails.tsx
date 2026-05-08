@@ -13,6 +13,7 @@ import { ProductMetaDetals } from '../non-sitecore/ProductMetaDetails';
 import { ProductDescription } from '../non-sitecore/ProductDescription';
 import { ProductSizeControl } from '../non-sitecore/ProductSizeControl';
 import { ProductColorControl } from '../non-sitecore/ProductColorControl';
+import { CONTENT_HUB_CONFIG } from '@/constants/content-hub';
 
 interface ProductDetailsProps extends ComponentProps {
   params: { [key: string]: string };
@@ -66,7 +67,7 @@ export const Default = (props: ProductDetailsProps) => {
         setProductDataSheetError(null);
 
         const res = await fetch(
-          `/api/content-hub/product-datasheet?id=${encodeURIComponent(sku)}`,
+          `${CONTENT_HUB_CONFIG.productDatasheetApiPath}?id=${encodeURIComponent(sku)}`,
           { signal: controller.signal }
         );
         const json = (await res.json()) as
