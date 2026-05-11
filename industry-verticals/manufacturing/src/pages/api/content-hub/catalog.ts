@@ -295,9 +295,7 @@ export default async function handler(
     const catalog = json.data?.m_PCM_Catalog ?? null;
     const productOrder = normalizeProductOrder(catalog?.productOrderJson);
 
-    const products = productOrder
-      ? await Promise.all(productOrder.products.map(fetchProduct))
-      : [];
+    const products = productOrder ? await Promise.all(productOrder.products.map(fetchProduct)) : [];
 
     return res.status(200).json({
       id,
@@ -310,3 +308,4 @@ export default async function handler(
     return res.status(500).json({ error: message });
   }
 }
+

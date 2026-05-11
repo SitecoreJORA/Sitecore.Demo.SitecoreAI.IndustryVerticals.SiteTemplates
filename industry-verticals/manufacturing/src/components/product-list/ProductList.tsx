@@ -157,9 +157,7 @@ export const Default = ({ fields, params }: ProductListProps) => {
                         {categoryName && (
                           <p className="text-foreground-muted text-sm">{categoryName}</p>
                         )}
-                        {product.error && (
-                          <p className="text-xs text-red-600">{product.error}</p>
-                        )}
+                        {product.error && <p className="text-xs text-red-600">{product.error}</p>}
                       </div>
                     </li>
                   );

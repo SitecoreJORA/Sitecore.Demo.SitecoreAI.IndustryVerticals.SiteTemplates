@@ -45,7 +45,7 @@ export const ProductMetaDetals = ({
   const shareTitle =
     isContentHub && contentHubShareTitle?.trim()
       ? contentHubShareTitle.trim()
-      : product.Title?.value ?? '';
+      : (product.Title?.value ?? '');
 
   return (
     <>
@@ -69,15 +69,13 @@ export const ProductMetaDetals = ({
             </>
           )}
 
-          {!isContentHub &&
-            Array.isArray(product?.Tags) &&
-            product.Tags.length > 0 && (
-              <>
-                <dt>{t('product_tags_label') || 'Tags'}</dt>
-                <dd className="text-center">:</dd>
-                <dd>{product.Tags.map((tag) => tag.fields.Tag.value).join(', ')}</dd>
-              </>
-            )}
+          {!isContentHub && Array.isArray(product?.Tags) && product.Tags.length > 0 && (
+            <>
+              <dt>{t('product_tags_label') || 'Tags'}</dt>
+              <dd className="text-center">:</dd>
+              <dd>{product.Tags.map((tag) => tag.fields.Tag.value).join(', ')}</dd>
+            </>
+          )}
 
           <dt className="flex items-center">{t('product_share_label') || 'Share'}</dt>
           <dd className="flex items-center justify-center">:</dd>

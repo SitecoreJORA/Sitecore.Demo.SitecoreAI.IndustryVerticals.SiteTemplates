@@ -7,8 +7,7 @@ const emptyRichText = (): RichTextField => ({
   value: '<div class="ck-content"></div>',
 });
 
-const PLACEHOLDER_IMAGE =
-  'https://placehold.co/120x120/e2e8f0/64748b/png?text=%20';
+const PLACEHOLDER_IMAGE = 'https://placehold.co/120x120/e2e8f0/64748b/png?text=%20';
 
 function imageFieldFromUrl(src: string | null | undefined): ImageField {
   const resolved = src?.trim() || PLACEHOLDER_IMAGE;
@@ -70,3 +69,4 @@ export function createProductStubFromContentHub(params: {
     Reviews: [],
   };
 }
+

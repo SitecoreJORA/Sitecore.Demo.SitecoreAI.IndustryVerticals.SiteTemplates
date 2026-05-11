@@ -54,9 +54,7 @@ export const Default = (props: ProductDetailsProps) => {
   const [productDiagramData, setProductDiagramData] = useState<string | null>(null);
   const [productDataSheetError, setProductDataSheetError] = useState<string | null>(null);
   const [isLoadingProductDataSheet, setIsLoadingProductDataSheet] = useState(false);
-  const [contentHubProduct, setContentHubProduct] = useState<ContentHubProductPayload | null>(
-    null
-  );
+  const [contentHubProduct, setContentHubProduct] = useState<ContentHubProductPayload | null>(null);
 
   const parsedDataSheet = useMemo(() => parseDataSheetJson(productDataSheet), [productDataSheet]);
   const parsedDiagramData = useMemo(
@@ -177,7 +175,7 @@ export const Default = (props: ProductDetailsProps) => {
 
   const displayTitle =
     contentHubProduct?.productName?.trim() ||
-    (isLoadingProductDataSheet ? (t('product_ch_loading_title') || 'Loading…') : sku);
+    (isLoadingProductDataSheet ? t('product_ch_loading_title') || 'Loading…' : sku);
 
   return (
     <section className={`component article-listing py-6 ${styles}`} id={id}>
