@@ -45,6 +45,13 @@ import { ProductDescription } from 'src/components/non-sitecore/ProductDescripti
 import { ProductSizeControl } from 'src/components/non-sitecore/ProductSizeControl';
 import { ProductColorControl } from 'src/components/non-sitecore/ProductColorControl';
 import { CONTENT_HUB_CONFIG } from '@/constants/content-hub';
+import { ProductDataSheetView } from 'src/components/product-details/product-data-sheet/ProductDataSheetView';
+import { parseDataSheetJson, parseDiagramDataJson } from 'src/components/product-details/product-data-sheet/parsers';
+import { getCategoryColor, getCategoryLabel } from '@/types/product-data-sheet';
+import { DataSheetBlockRenderer } from 'src/components/product-details/product-data-sheet/DataSheetBlockRenderer';
+import Chart from 'chart.js/auto';
+import dynamic from 'next/dynamic';
+import { toSafeHtml } from '@/utils/product-data-sheet/richText';
 import { EmailIcon, EmailShareButton, FacebookIcon as FacebookIcon_9cb8204ac12fcef03c9ff3e4b02fa570c6e7630c, FacebookShareButton, LinkedinIcon as LinkedinIcon_9cb8204ac12fcef03c9ff3e4b02fa570c6e7630c, LinkedinShareButton, PinterestIcon, PinterestShareButton, TwitterIcon as TwitterIcon_9cb8204ac12fcef03c9ff3e4b02fa570c6e7630c, TwitterShareButton } from 'react-share';
 import StarRating from 'src/components/non-sitecore/StarRating';
 import { ProductReviews } from 'src/components/non-sitecore/ProductReviews';
@@ -367,6 +374,50 @@ const importMap = [
     module: '@/constants/content-hub',
     exports: [
       { name: 'CONTENT_HUB_CONFIG', value: CONTENT_HUB_CONFIG },
+    ]
+  },
+  {
+    module: 'src/components/product-details/product-data-sheet/ProductDataSheetView',
+    exports: [
+      { name: 'ProductDataSheetView', value: ProductDataSheetView },
+    ]
+  },
+  {
+    module: 'src/components/product-details/product-data-sheet/parsers',
+    exports: [
+      { name: 'parseDataSheetJson', value: parseDataSheetJson },
+      { name: 'parseDiagramDataJson', value: parseDiagramDataJson },
+    ]
+  },
+  {
+    module: '@/types/product-data-sheet',
+    exports: [
+      { name: 'getCategoryColor', value: getCategoryColor },
+      { name: 'getCategoryLabel', value: getCategoryLabel },
+    ]
+  },
+  {
+    module: 'src/components/product-details/product-data-sheet/DataSheetBlockRenderer',
+    exports: [
+      { name: 'DataSheetBlockRenderer', value: DataSheetBlockRenderer },
+    ]
+  },
+  {
+    module: 'chart.js/auto',
+    exports: [
+      { name: 'default', value: Chart },
+    ]
+  },
+  {
+    module: 'next/dynamic',
+    exports: [
+      { name: 'default', value: dynamic },
+    ]
+  },
+  {
+    module: '@/utils/product-data-sheet/richText',
+    exports: [
+      { name: 'toSafeHtml', value: toSafeHtml },
     ]
   },
   {

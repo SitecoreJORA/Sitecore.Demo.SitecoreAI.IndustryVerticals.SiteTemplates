@@ -6,9 +6,17 @@ import { calculateAverageRating } from '@/helpers/productUtils';
 
 interface ProductDescriptionProps {
   product: Product;
+  /** When set (e.g. from Content Hub PCM), replaces the Sitecore `Title` in the main headline. */
+  contentHubProductName?: string | null;
+  /** Category labels from Content Hub `categoryToProduct` (shown under the headline). */
+  contentHubCategoryNames?: string[] | null;
 }
 
-export const ProductDescription = ({ product }: ProductDescriptionProps) => {
+export const ProductDescription = ({
+  product,
+  contentHubProductName,
+  contentHubCategoryNames,
+}: ProductDescriptionProps) => {
   const { page } = useSitecore();
   const isPageEditing = page.mode.isEditing;
   const { currency } = useLocale();
@@ -17,11 +25,28 @@ export const ProductDescription = ({ product }: ProductDescriptionProps) => {
   const reviewCount = reviews.length;
   const averageRating = calculateAverageRating(reviews);
 
+  const hubName = contentHubProductName?.trim();
+  const hubCategories = contentHubCategoryNames?.map((c) => c.trim()).filter(Boolean) ?? [];
+
   return (
     <>
       <h1 className="pt-3 text-4xl font-bold lg:pt-0">
-        <ContentSdkText field={product.Title} />
+        {isPageEditing ? (
+          <ContentSdkText field={product.Title} />
+        ) : hubName ? (
+          <span>{hubName}</span>
+        ) : (
+          <ContentSdkText field={product.Title} />
+        )}
       </h1>
+      {isPageEditing && hubName && (
+        <div className="text-foreground-muted mt-1 text-xs">
+          Content Hub name: <span className="text-foreground font-medium">{hubName}</span>
+        </div>
+      )}
+      {hubCategories.length > 0 && (
+        <p className="text-foreground-muted mt-2 text-sm">{hubCategories.join(' · ')}</p>
+      )}
 
       {(product?.Price?.value || isPageEditing) && (
         <p className="text-xl">
@@ -41,9 +66,9 @@ export const ProductDescription = ({ product }: ProductDescriptionProps) => {
       )}
 
       {(product?.ShortDescription?.value || isPageEditing) && (
-        <p className="text-foreground text-lg">
+        <div className="text-foreground text-lg">
           <ContentSdkText field={product.ShortDescription} />
-        </p>
+        </div>
       )}
     </>
   );

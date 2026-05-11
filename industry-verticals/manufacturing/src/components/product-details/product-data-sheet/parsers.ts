@@ -1,4 +1,4 @@
-import type { DataSheetDocument, DiagramDataDocument } from '@/types/product-data-sheet';
+import type { DataSheetDocument, DiagramDataDocument, TextBlock } from '@/types/product-data-sheet';
 
 export function parseDataSheetJson(raw: string | null): DataSheetDocument | null {
   if (!raw?.trim()) return null;
@@ -31,4 +31,22 @@ export function parseDiagramDataJson(raw: string | null): DiagramDataDocument | 
   } catch {
     return null;
   }
+}
+
+/**
+ * First non-empty `text` block from the datasheet (by section order) for product description copy.
+ */
+export function extractFirstTextBlockFromDataSheetJson(raw: string | null): string | null {
+  const doc = parseDataSheetJson(raw);
+  if (!doc) return null;
+  const sections = [...doc.sections].sort((a, b) => a.order - b.order);
+  for (const section of sections) {
+    for (const block of section.content) {
+      if (block.type === 'text') {
+        const raw = (block as TextBlock).content;
+        if (raw?.trim()) return raw;
+      }
+    }
+  }
+  return null;
 }

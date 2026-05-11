@@ -1,5 +1,5 @@
-import { Placeholder, useSitecore } from '@sitecore-content-sdk/nextjs';
-import { useEffect, useMemo, useState } from 'react';
+import { Placeholder, Text as ContentSdkText, useSitecore } from '@sitecore-content-sdk/nextjs';
+import { startTransition, useEffect, useMemo, useState } from 'react';
 import { ComponentProps } from '@/lib/component-props';
 import { Heart, Plus } from 'lucide-react';
 import { isParamEnabled } from '@/helpers/isParamEnabled';
@@ -8,14 +8,23 @@ import { Product } from '@/types/products';
 import { ProductTabs } from '../non-sitecore/ProductTabs';
 import QuantityControl from '../non-sitecore/QuantityControl';
 import { AddToCartButton } from '../non-sitecore/AddToCartButton';
-import { ProductGallery } from '../non-sitecore/ProductGallery';
 import { ProductMetaDetals } from '../non-sitecore/ProductMetaDetails';
-import { ProductDescription } from '../non-sitecore/ProductDescription';
-import { ProductSizeControl } from '../non-sitecore/ProductSizeControl';
-import { ProductColorControl } from '../non-sitecore/ProductColorControl';
 import { CONTENT_HUB_CONFIG } from '@/constants/content-hub';
 import { ProductDataSheetView } from './product-data-sheet/ProductDataSheetView';
-import { parseDataSheetJson, parseDiagramDataJson } from './product-data-sheet/parsers';
+import {
+  extractFirstTextBlockFromDataSheetJson,
+  parseDataSheetJson,
+  parseDiagramDataJson,
+} from './product-data-sheet/parsers';
+import { ContentHubProductGallery } from './ContentHubProductGallery';
+import { createProductStubFromContentHub } from '@/utils/content-hub-product-stub';
+
+type ContentHubProductPayload = {
+  productName: string | null;
+  productCategoryNames: string[];
+  masterImagePublicUrl: string | null;
+  galleryImagePublicUrls: string[];
+};
 
 interface ProductDetailsProps extends ComponentProps {
   params: { [key: string]: string };
@@ -40,13 +49,14 @@ export const Default = (props: ProductDetailsProps) => {
 
   const relatedProductsPlaceholderKey = `related-products-${props?.params?.DynamicPlaceholderId}`;
 
-  const [selectedColor, setSelectedColor] = useState(product?.Color?.[0]);
-  const [selectedSize, setSelectedSize] = useState(product?.Size?.[0]);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [productDataSheet, setProductDataSheet] = useState<string | null>(null);
   const [productDiagramData, setProductDiagramData] = useState<string | null>(null);
   const [productDataSheetError, setProductDataSheetError] = useState<string | null>(null);
   const [isLoadingProductDataSheet, setIsLoadingProductDataSheet] = useState(false);
+  const [contentHubProduct, setContentHubProduct] = useState<ContentHubProductPayload | null>(
+    null
+  );
 
   const parsedDataSheet = useMemo(() => parseDataSheetJson(productDataSheet), [productDataSheet]);
   const parsedDiagramData = useMemo(
@@ -54,16 +64,30 @@ export const Default = (props: ProductDetailsProps) => {
     [productDiagramData]
   );
 
+  const contentHubDescriptionSnippet = useMemo(
+    () => extractFirstTextBlockFromDataSheetJson(productDataSheet),
+    [productDataSheet]
+  );
+
+  const cartProductStub = useMemo(() => {
+    if (!sku || !contentHubProduct) return null;
+    return createProductStubFromContentHub({
+      sku,
+      productName: contentHubProduct.productName,
+      categoryNames: contentHubProduct.productCategoryNames,
+      galleryImagePublicUrls: contentHubProduct.galleryImagePublicUrls,
+    });
+  }, [sku, contentHubProduct]);
+
   useEffect(() => {
-    setSelectedColor(product?.Color?.[0]);
-    setSelectedSize(product?.Size?.[0]);
     setSelectedQuantity(1);
-  }, [product?.Color, product?.Size, productId]);
+  }, [productId, sku]);
 
   useEffect(() => {
     if (!sku) {
       setProductDataSheet(null);
       setProductDiagramData(null);
+      setContentHubProduct(null);
       setProductDataSheetError(null);
       setIsLoadingProductDataSheet(false);
       return;
@@ -75,6 +99,7 @@ export const Default = (props: ProductDetailsProps) => {
       try {
         setIsLoadingProductDataSheet(true);
         setProductDataSheetError(null);
+        setContentHubProduct(null);
 
         const res = await fetch(
           `${CONTENT_HUB_CONFIG.productDatasheetApiPath}?id=${encodeURIComponent(sku)}`,
@@ -85,6 +110,10 @@ export const Default = (props: ProductDetailsProps) => {
               id: string;
               sCHOTT_ProductDataSheet: string | null;
               sCHOTT_DiagramData?: string | null;
+              productName?: string | null;
+              productCategoryNames?: string[];
+              masterImagePublicUrl?: string | null;
+              galleryImagePublicUrls?: string[];
             }
           | { error: string };
 
@@ -92,6 +121,7 @@ export const Default = (props: ProductDetailsProps) => {
           const message = 'error' in json ? json.error : `Request failed (${res.status})`;
           setProductDataSheet(null);
           setProductDiagramData(null);
+          setContentHubProduct(null);
           setProductDataSheetError(message);
           return;
         }
@@ -99,17 +129,31 @@ export const Default = (props: ProductDetailsProps) => {
         if (!('sCHOTT_ProductDataSheet' in json)) {
           setProductDataSheet(null);
           setProductDiagramData(null);
+          setContentHubProduct(null);
           setProductDataSheetError('Unexpected response from server.');
           return;
         }
 
-        setProductDataSheet(json.sCHOTT_ProductDataSheet ?? null);
-        setProductDiagramData(json.sCHOTT_DiagramData ?? null);
+        startTransition(() => {
+          setProductDataSheet(json.sCHOTT_ProductDataSheet ?? null);
+          setProductDiagramData(json.sCHOTT_DiagramData ?? null);
+          setContentHubProduct({
+            productName: json.productName?.trim() || null,
+            productCategoryNames: Array.isArray(json.productCategoryNames)
+              ? json.productCategoryNames
+              : [],
+            masterImagePublicUrl: json.masterImagePublicUrl?.trim() || null,
+            galleryImagePublicUrls: Array.isArray(json.galleryImagePublicUrls)
+              ? json.galleryImagePublicUrls
+              : [],
+          });
+        });
       } catch (e) {
         if (e instanceof DOMException && e.name === 'AbortError') return;
         const message = e instanceof Error ? e.message : 'Unknown error';
         setProductDataSheet(null);
         setProductDiagramData(null);
+        setContentHubProduct(null);
         setProductDataSheetError(message);
       } finally {
         setIsLoadingProductDataSheet(false);
@@ -121,53 +165,49 @@ export const Default = (props: ProductDetailsProps) => {
     return () => controller.abort();
   }, [sku]);
 
-  if (!props.fields?.Title) {
+  if (!sku) {
     return isPageEditing ? (
       <div className={`component article-listing py-6 ${styles}`} id={id}>
-        [Product Details]
+        [Product Details — assign SKU on this item to load Content Hub product data]
       </div>
     ) : (
       <></>
     );
   }
 
+  const displayTitle =
+    contentHubProduct?.productName?.trim() ||
+    (isLoadingProductDataSheet ? (t('product_ch_loading_title') || 'Loading…') : sku);
+
   return (
     <section className={`component article-listing py-6 ${styles}`} id={id}>
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-2">
-          {/* Left image section */}
-          <ProductGallery product={product} key={productId} />
+          <div className="w-full">
+            <ContentHubProductGallery
+              imageUrls={contentHubProduct?.galleryImagePublicUrls ?? []}
+              preferredMainUrl={contentHubProduct?.masterImagePublicUrl}
+              productName={displayTitle}
+            />
+          </div>
 
-          {/* Right product info */}
           <div className="max-w-xl space-y-4 pb-4 lg:px-10">
-            <ProductDescription product={product} />
+            <div>
+              <h1 className="pt-3 text-4xl font-bold lg:pt-0">{displayTitle}</h1>
+              {isPageEditing && (
+                <p className="text-foreground-muted mt-2 text-xs">
+                  {t('product_ch_sku_source_hint') || 'SKU from Sitecore:'}{' '}
+                  <ContentSdkText field={product.SKU} tag="span" />
+                </p>
+              )}
+              {!!contentHubProduct?.productCategoryNames?.length && (
+                <p className="text-foreground-muted mt-2 text-sm">
+                  {contentHubProduct.productCategoryNames.join(' · ')}
+                </p>
+              )}
+            </div>
 
             <div className="flex flex-wrap justify-between gap-4 py-5">
-              {/* Sizes */}
-              {!!product?.Size?.length && (
-                <div>
-                  <p className="mb-2 text-sm">{t('product_size_label') || 'Size'}</p>
-                  <ProductSizeControl
-                    sizes={product.Size}
-                    selectedSize={selectedSize}
-                    onSelect={setSelectedSize}
-                  />
-                </div>
-              )}
-
-              {/* Colors */}
-              {!!product?.Color?.length && (
-                <div>
-                  <p className="mb-2 text-sm">{t('product_color_label') || 'Color'}</p>
-                  <ProductColorControl
-                    colors={product.Color}
-                    selectedColor={selectedColor}
-                    onSelect={setSelectedColor}
-                  />
-                </div>
-              )}
-
-              {/* Quantity */}
               <div>
                 <p className="mb-2 text-sm">{t('product_quantity_label') || 'Quantity'}</p>
                 <QuantityControl
@@ -178,28 +218,24 @@ export const Default = (props: ProductDetailsProps) => {
               </div>
             </div>
 
-            {/* Add to cart */}
-            {ShowAddtoCartButton && (
+            {ShowAddtoCartButton && cartProductStub && (
               <AddToCartButton
                 productId={productId || ''}
-                product={product}
+                product={cartProductStub}
                 selectedQuantity={selectedQuantity}
-                selectedColor={selectedColor}
-                selectedSize={selectedSize}
               />
             )}
 
-            {/* Action Buttons */}
             <div className="flex flex-wrap gap-x-10 gap-y-4">
               {ShowCompareButton && (
-                <button className="action-btn">
+                <button type="button" className="action-btn">
                   <Plus className="size-5" strokeWidth={3} />
                   {t('compare_btn_text') || 'Compare'}
                 </button>
               )}
 
               {ShowAddtoWishlistButton && (
-                <button className="action-btn">
+                <button type="button" className="action-btn">
                   <Heart className="size-5" strokeWidth={3} />
                   {t('wishlist_btn_text') || 'Add to Wishlist'}
                 </button>
@@ -207,24 +243,27 @@ export const Default = (props: ProductDetailsProps) => {
             </div>
           </div>
 
-          <ProductMetaDetals product={product} />
+          <ProductMetaDetals
+            product={product}
+            contentSource="contentHub"
+            contentHubCategoryNames={contentHubProduct?.productCategoryNames}
+            contentHubShareTitle={contentHubProduct?.productName?.trim() || sku}
+          />
         </div>
       </div>
 
       <ProductTabs
-        product={product}
+        product={cartProductStub ?? product}
         isPageEditing={isPageEditing}
-        dynamicPlaceholderId={props.params.DynamicPlaceholderId}
         rendering={props.rendering}
+        useContentHubSource
+        contentHubDescriptionRaw={contentHubDescriptionSnippet}
       />
 
       <div className="container mt-8">
         <h3 className="text-xl font-bold">
           {t('product_datasheet_heading') || 'Technical datasheet'}
         </h3>
-        {!sku && (
-          <p className="text-foreground-muted mt-2 text-sm">No SKU found on this product.</p>
-        )}
         {isLoadingProductDataSheet && (
           <p className="text-foreground-muted mt-2 text-sm">Loading…</p>
         )}

@@ -18,7 +18,9 @@ import * as RichText from 'src/components/rich-text/RichText';
 import * as Reviews from 'src/components/reviews/Reviews';
 import * as Promo from 'src/components/promo/Promo';
 import * as ProductListing from 'src/components/product-listing/ProductListing';
+import * as ProductList from 'src/components/product-list/ProductList';
 import * as ProductDetails from 'src/components/product-details/ProductDetails';
+import * as ContentHubProductGallery from 'src/components/product-details/ContentHubProductGallery';
 import * as parsers from 'src/components/product-details/product-data-sheet/parsers';
 import * as ProductDataSheetView from 'src/components/product-details/product-data-sheet/ProductDataSheetView';
 import * as DiagramChart from 'src/components/product-details/product-data-sheet/DiagramChart';
@@ -76,7 +78,9 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['Reviews', { ...Reviews }],
   ['Promo', { ...Promo }],
   ['ProductListing', { ...ProductListing }],
+  ['ProductList', { ...ProductList }],
   ['ProductDetails', { ...ProductDetails }],
+  ['ContentHubProductGallery', { ...ContentHubProductGallery }],
   ['parsers', { ...parsers }],
   ['ProductDataSheetView', { ...ProductDataSheetView }],
   ['DiagramChart', { ...DiagramChart }],

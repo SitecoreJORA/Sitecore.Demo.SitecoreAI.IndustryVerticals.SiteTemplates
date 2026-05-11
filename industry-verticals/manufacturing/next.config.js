@@ -47,6 +47,11 @@ const nextConfig = {
         hostname: 'placehold.co',
         port: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'almu-schott.sitecoresandbox.cloud',
+        port: '',
+      },
     ],
   },
 

@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Chart, registerables, type Plugin } from 'chart.js';
+import Chart from 'chart.js/auto';
+import type { Plugin } from 'chart.js';
 import type { Annotation, Diagram } from '@/types/product-data-sheet';
-
-Chart.register(...registerables);
 
 const SERIES_COLORS = [
   '#2E75B6',
@@ -168,7 +167,11 @@ export default function DiagramChart({ diagram }: DiagramChartProps) {
 
     return () => {
       if (chartRef.current) {
-        chartRef.current.destroy();
+        try {
+          chartRef.current.destroy();
+        } catch {
+          /* Chart.js can throw if the canvas was already detached from the DOM */
+        }
         chartRef.current = null;
       }
     };

@@ -6,6 +6,12 @@ type SuccessResponse = {
   sCHOTT_ProductDataSheet: string | null;
   /** SCHOTT.DiagramData JSON when exposed on the PCM Product entity in Content Hub GraphQL. */
   sCHOTT_DiagramData: string | null;
+  productName: string | null;
+  productCategoryNames: string[];
+  /** Full public URL for the chosen master-asset image (`publicContentBaseUrl` + `relativeUrl`). */
+  masterImagePublicUrl: string | null;
+  /** All unique public image URLs from master-asset links (order preserved). */
+  galleryImagePublicUrls: string[];
 };
 
 type ErrorResponse = {
@@ -35,15 +41,93 @@ function getAuthHeaders(): Record<string, string> {
   return headers;
 }
 
+type PcmProductGraphQl = {
+  sCHOTT_ProductDataSheet?: string | null;
+  sCHOTT_DiagramData?: string | null;
+  productName?: string | null;
+  categoryToProduct?: {
+    results?: Array<{ productCategoryName?: string | null } | null> | null;
+  } | null;
+  pCMProductToMasterAsset?: {
+    results?: Array<{
+      assetToPublicLink?: {
+        results?: Array<{ relativeUrl?: string | null } | null> | null;
+      } | null;
+    } | null> | null;
+  } | null;
+};
+
 type GraphQlPayload = {
   data?: {
-    m_PCM_Product?: {
-      sCHOTT_ProductDataSheet?: string | null;
-      sCHOTT_DiagramData?: string | null;
-    } | null;
+    m_PCM_Product?: PcmProductGraphQl | null;
   } | null;
   errors?: Array<{ message?: string }>;
 };
+
+function normalizePublicContentBaseUrl(): string {
+  const raw = CONTENT_HUB_CONFIG.publicContentBaseUrl.trim();
+  return raw.endsWith('/') ? raw : `${raw}/`;
+}
+
+function publicContentUrlFromRelative(relativeUrl: string): string {
+  const rel = relativeUrl.trim().replace(/^\/+/, '');
+  return `${normalizePublicContentBaseUrl()}${rel}`;
+}
+
+/**
+ * Prefer a hero-style asset when multiple public links exist; otherwise first non-empty `relativeUrl`.
+ */
+function pickMasterAssetRelativeUrl(product: PcmProductGraphQl | null | undefined): string | null {
+  const masterResults = product?.pCMProductToMasterAsset?.results;
+  if (!Array.isArray(masterResults) || masterResults.length === 0) return null;
+
+  const urls: string[] = [];
+  for (const row of masterResults) {
+    const linkResults = row?.assetToPublicLink?.results;
+    if (!Array.isArray(linkResults)) continue;
+    for (const link of linkResults) {
+      const u = link?.relativeUrl?.trim();
+      if (u) urls.push(u);
+    }
+  }
+  if (urls.length === 0) return null;
+
+  const heroPattern = /Hero|LandingPage|HomePage|2000x800|2000x600|PromoCTA/i;
+  const preferred = urls.find((u) => heroPattern.test(u));
+  return preferred ?? urls[0] ?? null;
+}
+
+function extractProductCategoryNames(product: PcmProductGraphQl | null | undefined): string[] {
+  const rows = product?.categoryToProduct?.results;
+  if (!Array.isArray(rows)) return [];
+  const names: string[] = [];
+  for (const row of rows) {
+    const n = row?.productCategoryName?.trim();
+    if (n) names.push(n);
+  }
+  return names;
+}
+
+function collectGalleryPublicUrls(product: PcmProductGraphQl | null | undefined): string[] {
+  const masterResults = product?.pCMProductToMasterAsset?.results;
+  if (!Array.isArray(masterResults)) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const row of masterResults) {
+    const linkResults = row?.assetToPublicLink?.results;
+    if (!Array.isArray(linkResults)) continue;
+    for (const link of linkResults) {
+      const u = link?.relativeUrl?.trim();
+      if (!u) continue;
+      const full = publicContentUrlFromRelative(u);
+      if (!seen.has(full)) {
+        seen.add(full);
+        out.push(full);
+      }
+    }
+  }
+  return out;
+}
 
 async function postContentHubGraphql(
   query: string,
@@ -73,11 +157,32 @@ function shouldRetryDatasheetOnly(errors: Array<{ message?: string }>): boolean 
   );
 }
 
+const PCM_PRODUCT_SHARED_FIELDS = /* GraphQL */ `
+    productName
+    categoryToProduct {
+      results {
+        productCategoryName
+      }
+    }
+    pCMProductToMasterAsset {
+      total
+      results {
+        assetToPublicLink {
+          total
+          results {
+            relativeUrl
+          }
+        }
+      }
+    }
+`;
+
 const QUERY_PRODUCT_DATASHEET_AND_DIAGRAM = /* GraphQL */ `
   query ProductDataSheet($id: String!) {
     m_PCM_Product(id: $id) {
       sCHOTT_ProductDataSheet
       sCHOTT_DiagramData
+      ${PCM_PRODUCT_SHARED_FIELDS}
     }
   }
 `;
@@ -86,6 +191,7 @@ const QUERY_PRODUCT_DATASHEET_ONLY = /* GraphQL */ `
   query ProductDataSheet($id: String!) {
     m_PCM_Product(id: $id) {
       sCHOTT_ProductDataSheet
+      ${PCM_PRODUCT_SHARED_FIELDS}
     }
   }
 `;
@@ -153,10 +259,20 @@ export default async function handler(
     const product = json?.data?.m_PCM_Product;
     const dataSheet = product?.sCHOTT_ProductDataSheet ?? null;
     const diagramData = product?.sCHOTT_DiagramData ?? null;
+    const productName = product?.productName?.trim() || null;
+    const productCategoryNames = extractProductCategoryNames(product);
+    const relative = pickMasterAssetRelativeUrl(product);
+    const masterImagePublicUrl = relative ? publicContentUrlFromRelative(relative) : null;
+    const galleryImagePublicUrls = collectGalleryPublicUrls(product);
+
     return res.status(200).json({
       id,
       sCHOTT_ProductDataSheet: dataSheet,
       sCHOTT_DiagramData: diagramData,
+      productName,
+      productCategoryNames,
+      masterImagePublicUrl,
+      galleryImagePublicUrls,
     });
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Unknown error';

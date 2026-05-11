@@ -6,9 +6,21 @@ import { Product } from '@/types/products';
 
 interface ProductMetaDetalsProps {
   product: Product;
+  /**
+   * When `contentHub`, category and share title come from Content Hub props;
+   * Sitecore category/tags are not shown. SKU still uses the Sitecore field component.
+   */
+  contentSource?: 'sitecore' | 'contentHub';
+  contentHubCategoryNames?: string[];
+  contentHubShareTitle?: string;
 }
 
-export const ProductMetaDetals = ({ product }: ProductMetaDetalsProps) => {
+export const ProductMetaDetals = ({
+  product,
+  contentSource = 'sitecore',
+  contentHubCategoryNames,
+  contentHubShareTitle,
+}: ProductMetaDetalsProps) => {
   const { page } = useSitecore();
   const { t } = useI18n();
 
@@ -21,6 +33,19 @@ export const ProductMetaDetals = ({ product }: ProductMetaDetalsProps) => {
       setCurrentUrl(window.location.href);
     }
   }, [product]);
+
+  const isContentHub = contentSource === 'contentHub';
+  const categoryLine =
+    isContentHub && contentHubCategoryNames?.length
+      ? contentHubCategoryNames.join(', ')
+      : !isContentHub && product.Category?.fields?.CategoryName?.value
+        ? product.Category.fields.CategoryName.value
+        : null;
+
+  const shareTitle =
+    isContentHub && contentHubShareTitle?.trim()
+      ? contentHubShareTitle.trim()
+      : product.Title?.value ?? '';
 
   return (
     <>
@@ -36,28 +61,30 @@ export const ProductMetaDetals = ({ product }: ProductMetaDetalsProps) => {
             </>
           )}
 
-          {product.Category?.fields?.CategoryName?.value && (
+          {categoryLine && (
             <>
               <dt>{t('product_category_label') || 'Category'}</dt>
               <dd className="text-center">:</dd>
-              <dd>{product.Category?.fields?.CategoryName?.value}</dd>
+              <dd>{categoryLine}</dd>
             </>
           )}
 
-          {Array.isArray(product?.Tags) && product.Tags.length > 0 && (
-            <>
-              <dt>{t('product_tags_label') || 'Tags'}</dt>
-              <dd className="text-center">:</dd>
-              <dd>{product.Tags.map((t) => t.fields.Tag.value).join(', ')}</dd>
-            </>
-          )}
+          {!isContentHub &&
+            Array.isArray(product?.Tags) &&
+            product.Tags.length > 0 && (
+              <>
+                <dt>{t('product_tags_label') || 'Tags'}</dt>
+                <dd className="text-center">:</dd>
+                <dd>{product.Tags.map((tag) => tag.fields.Tag.value).join(', ')}</dd>
+              </>
+            )}
 
           <dt className="flex items-center">{t('product_share_label') || 'Share'}</dt>
           <dd className="flex items-center justify-center">:</dd>
           <dd className="mr-1">
             <SocialShare
               url={currentUrl}
-              title={product.Title?.value ?? ''}
+              title={shareTitle}
               round={true}
               className="flex flex-wrap gap-3"
               iconClassName="size-8"
